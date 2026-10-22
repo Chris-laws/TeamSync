@@ -24,6 +24,7 @@ var Storage_ = {
   },
   all: function (sheetName) {
     var sheet = this.spreadsheet().getSheetByName(sheetName);
+    if (!sheet && ['Spaces','Teams','TeamMembers'].indexOf(sheetName) >= 0) return [];
     if (!sheet) throw appError_('NOT_INITIALIZED', 'Run application initialization first.');
     var values = sheet.getDataRange().getValues();
     if (values.length < 2) return [];
@@ -36,7 +37,8 @@ var Storage_ = {
   },
   find: function (sheetName, field, value) { return this.all(sheetName).find(function (item) { return String(item[field]) === String(value); }) || null; },
   insert: function (sheetName, item) {
-    var sheet = this.spreadsheet().getSheetByName(sheetName);
+    var spreadsheet = this.spreadsheet(), sheet = spreadsheet.getSheetByName(sheetName);
+    if (!sheet) { sheet = spreadsheet.insertSheet(sheetName); sheet.getRange(1, 1, 1, SCHEMAS_[sheetName].length).setValues([SCHEMAS_[sheetName]]); sheet.setFrozenRows(1); }
     var headers = SCHEMAS_[sheetName];
     sheet.appendRow(headers.map(function (header) { return item[header] == null ? '' : item[header]; }));
     this.invalidate();
