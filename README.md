@@ -1,12 +1,12 @@
 # TeamSync
 
-TeamSync is a Google Workspace task-management web app built entirely with Google Apps Script, HTML Service, and a private Google Sheet. It provides project-aware task CRUD, filtered table views, My Tasks, dashboard statistics, Kanban drag and drop, subtasks, comments, activity history, optimistic version checks, responsive light/dark UI, and server-side role/access enforcement.
+TeamSync is a Google Workspace task-management web app built entirely with Google Apps Script, HTML Service, and a private Google Sheet. It provides a Workspace → Spaces → Projects → Tasks hierarchy, project-aware task CRUD, filtered table views, My Tasks, dashboard statistics, Kanban drag and drop, subtasks, comments, activity history, optimistic version checks, responsive light/dark UI, and server-side role/access enforcement.
 
 ## Architecture
 
 - `Code.gs` exposes the web app and a small authenticated API surface.
 - `AuthService.gs` resolves `Session.getActiveUser().getEmail()`, enforces the corporate domain and allowlist, and obtains names from the Admin SDK Directory API.
-- `StorageService.gs` owns all Sheet reads and writes. Persistent IDs are UUIDs; row numbers are internal lookup details only.
+- `StorageService.gs` owns all Sheet reads and writes. Persistent IDs are UUIDs; row numbers are internal lookup details only. `Spaces` isolates project context; `ProjectMembers` continues to enforce task visibility.
 - `TaskService.gs` enforces validation, project access, assignment allowlisting, locking, version checks, activity records, and bounded reads.
 - `Index.html`, `Styles.html`, and `Scripts.html` form the build-free SPA.
 

@@ -55,6 +55,24 @@ var UserService_ = {
   }
 };
 
+var SpaceService_ = {
+  list: function (ctx) {
+    var spaces = Storage_.all('Spaces');
+    var projects = Storage_.all('Projects');
+    return spaces.map(function (space) {
+      var own = projects.filter(function (p) { return p.spaceId === space.spaceId && p.status !== 'archived'; });
+      return { spaceId:space.spaceId, name:space.name, description:space.description, color:space.color, projectCount:own.length };
+    });
+  },
+  create: function (ctx, input) {
+    AuthService_.requireAdmin(ctx);
+    var name = cleanText_(input && input.name, 100);
+    if (!name) throw appError_('VALIDATION', 'Space name is required.');
+    var now = nowIso_();
+    return Storage_.insert('Spaces', { spaceId:uuid_(), name:name, description:cleanText_(input.description, 1000), color:cleanText_(input.color, 20) || '#0050AA', createdBy:ctx.user.userId, createdAt:now, updatedAt:now });
+  }
+};
+
 var ProjectService_ = {
   list: function (ctx) {
     var allowed = ctx.user.role === 'admin' ? null : Storage_.all('ProjectMembers').filter(function (m) { return m.userId === ctx.user.userId; }).map(function (m) { return m.projectId; });
@@ -64,7 +82,7 @@ var ProjectService_ = {
       return Object.assign({}, p, { taskCount:own.length, completedCount:done, progress:own.length ? Math.round(done / own.length * 100) : 0, _row:undefined });
     });
   },
-  create: function (ctx, input) { AuthService_.requireAdmin(ctx); var now=nowIso_(), name=cleanText_(input && input.name,120); if(!name) throw appError_('VALIDATION','Project name is required.'); return Storage_.insert('Projects',{projectId:uuid_(),name:name,description:cleanText_(input.description,2000),status:'active',createdBy:ctx.user.userId,createdAt:now,updatedAt:now}); },
+  create: function (ctx, input) { AuthService_.requireAdmin(ctx); var now=nowIso_(), name=cleanText_(input && input.name,120), spaceId=cleanText_(input && input.spaceId,120); if(!name) throw appError_('VALIDATION','Project name is required.'); if(spaceId&&!Storage_.find('Spaces','spaceId',spaceId))throw appError_('VALIDATION','Select a valid space.'); return Storage_.insert('Projects',{projectId:uuid_(),name:name,description:cleanText_(input.description,2000),status:'active',createdBy:ctx.user.userId,createdAt:now,updatedAt:now,spaceId:spaceId}); },
   update: function (ctx, id, patch) { AuthService_.requireAdmin(ctx); var row=Storage_.find('Projects','projectId',id); if(!row) throw appError_('NOT_FOUND','Project not found.'); ['name','description','status'].forEach(function(k){if(patch[k]!=null) row[k]=cleanText_(patch[k],k==='description'?2000:120);}); row.updatedAt=nowIso_(); return Storage_.update('Projects',row._row,row); },
   setMembership: function (ctx, projectId, userId, enabled) {
     AuthService_.requireAdmin(ctx);

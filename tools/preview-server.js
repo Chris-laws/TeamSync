@@ -17,10 +17,15 @@ function mockBridge() {
       {userId:'u2',email:'maya.chen@teamsync.example',givenName:'Maya',familyName:'Chen',displayName:'Maya Chen',photoUrl:'',status:'active',role:'member',profileStatus:'resolved',projectIds:['p1','p2']},
       {userId:'u3',email:'noah.wilson@teamsync.example',givenName:'Noah',familyName:'Wilson',displayName:'Noah Wilson',photoUrl:'',status:'active',role:'member',profileStatus:'resolved',projectIds:['p1','p3']}
     ];
+    const spaces = [
+      {spaceId:'s1',name:'Demand Forecast',description:'Planning and forecasting',color:'#0050AA',projectCount:1},
+      {spaceId:'s2',name:'Innovation',description:'New product work',color:'#FFB800',projectCount:1},
+      {spaceId:'s3',name:'Operations',description:'Operational delivery',color:'#E30613',projectCount:1}
+    ];
     const projects = [
-      {projectId:'p1',name:'Platform Redesign',description:'Refresh the customer workspace and core workflows.',status:'active',taskCount:5,completedCount:1,progress:20},
-      {projectId:'p2',name:'Mobile Launch',description:'Coordinate the public mobile release.',status:'active',taskCount:3,completedCount:1,progress:33},
-      {projectId:'p3',name:'Brand System',description:'Create a consistent visual language.',status:'active',taskCount:2,completedCount:0,progress:0}
+      {projectId:'p1',name:'Forecast Quality',spaceId:'s1',description:'Refresh the customer workspace and core workflows.',status:'active',taskCount:5,completedCount:1,progress:20},
+      {projectId:'p2',name:'KPI Monitoring',spaceId:'s2',description:'Coordinate the public mobile release.',status:'active',taskCount:3,completedCount:1,progress:33},
+      {projectId:'p3',name:'Data Quality',spaceId:'s3',description:'Create a consistent visual language.',status:'active',taskCount:2,completedCount:0,progress:0}
     ];
     let tasks = [
       ['t1','Finalize navigation patterns','Document responsive navigation behavior.','in_progress','high','p1','u1',day(1)],
@@ -34,7 +39,7 @@ function mockBridge() {
     ].map((x,i)=>({taskId:x[0],title:x[1],description:x[2],status:x[3],priority:x[4],projectId:x[5],assigneeId:x[6],createdBy:'u1',createdAt:iso,updatedAt:iso,startDate:day(-3),dueDate:x[7],completedAt:x[3]==='done'?iso:'',tags:['Preview'],estimatedEffort:'4h',position:i+1,version:1}));
     const details = {};
     const dashboard = () => { const mine=tasks.filter(t=>t.assigneeId==='u1'),open=mine.filter(t=>!['done','cancelled'].includes(t.status)); return {open:open.length,inProgress:mine.filter(t=>t.status==='in_progress').length,completed:mine.filter(t=>t.status==='done').length,overdue:open.filter(t=>t.dueDate&&t.dueDate<day(0)).length,upcoming:open.filter(t=>t.dueDate&&t.dueDate>=day(0)).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).slice(0,8),recent:mine.slice(0,8)} };
-    const bootstrap = () => ({user:users[0],users,projects,tasks,dashboard:dashboard(),preferences:{theme:'light'},diagnostics:{activeEmailAvailable:true,effectiveUserEmail:users[0].email,activeUserEmail:users[0].email,role:'admin',profileStatus:'resolved',deploymentNote:'Local preview: Workspace identity is mocked.'}});
+    const bootstrap = () => ({user:users[0],users,spaces,projects,tasks,dashboard:dashboard(),preferences:{theme:'light'},diagnostics:{activeEmailAvailable:true,effectiveUserEmail:users[0].email,activeUserEmail:users[0].email,role:'admin',profileStatus:'resolved',deploymentNote:'Local preview: Workspace identity is mocked.'}});
     const handlers = {
       getBootstrapData: bootstrap,
       apiCreateTask: input => { const task={...input,taskId:'t'+Date.now(),createdBy:'u1',createdAt:iso,updatedAt:iso,completedAt:'',position:Date.now(),version:1};tasks.unshift(task);return task },

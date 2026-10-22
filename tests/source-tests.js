@@ -30,6 +30,7 @@ test('effective user is not used for authorization', () => {
 });
 test('task schema has stable ID and optimistic version', () => {
   assert(config.includes("'taskId'") && config.includes("'version'") && config.includes("'position'"), 'Task schema incomplete');
+  assert(config.includes('Spaces') && config.includes('spaceId'), 'Space schema missing');
   assert(tasks.includes("'VERSION_CONFLICT'"), 'Version conflict missing');
   assert(tasks.includes('Storage_.withLock'), 'Task mutation lock missing');
 });
@@ -49,7 +50,8 @@ test('admin APIs enforce server-side administrator role', () => {
   });
 });
 test('required UI surfaces exist', () => {
-  ['Dashboard','My Tasks','All Tasks','Kanban Board','Projects','Completed Tasks','Authorised employees'].forEach(label => assert(scripts.includes(label), `${label} missing`));
+  ['Dashboard','Tasks','Teams','Settings','Spaces','Projects','Authorised employees'].forEach(label => assert(scripts.includes(label) || index.includes(label), `${label} missing`));
+  ['Type','Tags','Progress','data-page','kanban-add'].forEach(label => assert(scripts.includes(label), `Task surface missing: ${label}`));
   assert(index.includes('globalSearch') && index.includes('quickAddBtn') && index.includes('drawer'), 'Application shell incomplete');
   ['Overdue','Today','Upcoming','No due date','Completed'].forEach(label => assert(scripts.includes(`['${label}'`), `My Tasks group missing: ${label}`));
 });

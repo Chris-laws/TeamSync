@@ -38,6 +38,7 @@ function getBootstrapData() {
     return {
       user: context.user,
       diagnostics: AuthService_.diagnostics(context),
+      spaces: SpaceService_.list(context),
       projects: ProjectService_.list(context),
       users: UserService_.listAssignable(context),
       tasks: TaskService_.list(context, { limit: 500 }),
@@ -55,6 +56,7 @@ function apiReorderTask(taskId, status, position, version) { return Api_.run(fun
 function apiBulkUpdateTasks(taskIds, patch) { return Api_.run(function (ctx) { return TaskService_.bulkUpdate(ctx, taskIds, patch); }); }
 function apiCreateProject(input) { return Api_.run(function (ctx) { return ProjectService_.create(ctx, input); }); }
 function apiUpdateProject(projectId, patch) { return Api_.run(function (ctx) { return ProjectService_.update(ctx, projectId, patch); }); }
+function apiCreateSpace(input) { return Api_.run(function (ctx) { return SpaceService_.create(ctx, input); }); }
 function apiAddComment(taskId, content) { return Api_.run(function (ctx) { return CommentService_.create(ctx, taskId, content); }); }
 function apiAddSubtask(taskId, title) { return Api_.run(function (ctx) { return SubtaskService_.create(ctx, taskId, title); }); }
 function apiToggleSubtask(subtaskId, completed) { return Api_.run(function (ctx) { return SubtaskService_.toggle(ctx, subtaskId, completed); }); }
