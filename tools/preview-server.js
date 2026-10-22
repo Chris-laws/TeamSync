@@ -22,6 +22,10 @@ function mockBridge() {
       {spaceId:'s2',name:'Innovation',description:'New product work',color:'#FFB800',projectCount:1},
       {spaceId:'s3',name:'Operations',description:'Operational delivery',color:'#E30613',projectCount:1}
     ];
+    const teams = [
+      {teamId:'team1',spaceId:'s1',name:'Forecasting',description:'Demand planning team',memberCount:2},
+      {teamId:'team2',spaceId:'s2',name:'Innovation Lab',description:'New product team',memberCount:1}
+    ];
     const projects = [
       {projectId:'p1',name:'Forecast Quality',spaceId:'s1',description:'Refresh the customer workspace and core workflows.',status:'active',taskCount:5,completedCount:1,progress:20},
       {projectId:'p2',name:'KPI Monitoring',spaceId:'s2',description:'Coordinate the public mobile release.',status:'active',taskCount:3,completedCount:1,progress:33},
@@ -39,7 +43,7 @@ function mockBridge() {
     ].map((x,i)=>({taskId:x[0],title:x[1],description:x[2],status:x[3],priority:x[4],projectId:x[5],assigneeId:x[6],createdBy:'u1',createdAt:iso,updatedAt:iso,startDate:day(-3),dueDate:x[7],completedAt:x[3]==='done'?iso:'',tags:['Preview'],estimatedEffort:'4h',position:i+1,version:1}));
     const details = {};
     const dashboard = () => { const mine=tasks.filter(t=>t.assigneeId==='u1'),open=mine.filter(t=>!['done','cancelled'].includes(t.status)); return {open:open.length,inProgress:mine.filter(t=>t.status==='in_progress').length,completed:mine.filter(t=>t.status==='done').length,overdue:open.filter(t=>t.dueDate&&t.dueDate<day(0)).length,upcoming:open.filter(t=>t.dueDate&&t.dueDate>=day(0)).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).slice(0,8),recent:mine.slice(0,8)} };
-    const bootstrap = () => ({user:users[0],users,spaces,projects,tasks,dashboard:dashboard(),preferences:{theme:'light'},diagnostics:{activeEmailAvailable:true,effectiveUserEmail:users[0].email,activeUserEmail:users[0].email,role:'admin',profileStatus:'resolved',deploymentNote:'Local preview: Workspace identity is mocked.'}});
+    const bootstrap = () => ({user:users[0],users,spaces,teams,projects,tasks,dashboard:dashboard(),preferences:{theme:'light'},diagnostics:{activeEmailAvailable:true,effectiveUserEmail:users[0].email,activeUserEmail:users[0].email,role:'admin',profileStatus:'resolved',deploymentNote:'Local preview: Workspace identity is mocked.'}});
     const handlers = {
       getBootstrapData: bootstrap,
       apiCreateTask: input => { const task={...input,taskId:'t'+Date.now(),createdBy:'u1',createdAt:iso,updatedAt:iso,completedAt:'',position:Date.now(),version:1};tasks.unshift(task);return task },
@@ -52,6 +56,8 @@ function mockBridge() {
       apiAddSubtask: (id,title) => { const row={subtaskId:'s'+Date.now(),taskId:id,title,completed:false};(details[id]??={comments:[],subtasks:[],activity:[]}).subtasks.push(row);return row },
       apiToggleSubtask: (id,completed) => { for(const detail of Object.values(details)){const row=detail.subtasks.find(s=>s.subtaskId===id);if(row){row.completed=completed;return row}} },
       apiCreateProject: input => { const row={...input,projectId:'p'+Date.now(),status:'active',taskCount:0,completedCount:0,progress:0};projects.push(row);return row },
+      apiCreateSpace: input => { const row={...input,spaceId:'s'+Date.now(),projectCount:0};spaces.push(row);return row },
+      apiCreateTeam: input => { const row={...input,teamId:'team'+Date.now(),memberCount:0};teams.push(row);return row },
       apiUpdateProject: (id,patch) => Object.assign(projects.find(p=>p.projectId===id),patch),
       apiSavePreferences: value => value,
       apiListAdminUsers: () => users,

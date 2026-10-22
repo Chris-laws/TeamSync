@@ -12,6 +12,8 @@ var SCHEMAS_ = {
   Users: ['userId','email','workspaceId','givenName','familyName','displayName','photoUrl','status','role','profileStatus','firstLoginAt','lastActiveAt'],
   Spaces: ['spaceId','name','description','color','createdBy','createdAt','updatedAt'],
   Projects: ['projectId','name','description','status','createdBy','createdAt','updatedAt','spaceId'],
+  Teams: ['teamId','spaceId','name','description','createdBy','createdAt','updatedAt'],
+  TeamMembers: ['teamMemberId','teamId','userId','createdAt'],
   ProjectMembers: ['projectMemberId','projectId','userId','accessLevel','createdAt'],
   Tasks: ['taskId','title','description','status','priority','projectId','assigneeId','createdBy','createdAt','updatedAt','startDate','dueDate','completedAt','tags','estimatedEffort','position','version','archivedAt'],
   Subtasks: ['subtaskId','taskId','title','completed','createdBy','createdAt','updatedAt'],

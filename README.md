@@ -6,7 +6,7 @@ TeamSync is a Google Workspace task-management web app built entirely with Googl
 
 - `Code.gs` exposes the web app and a small authenticated API surface.
 - `AuthService.gs` resolves `Session.getActiveUser().getEmail()`, enforces the corporate domain and allowlist, and obtains names from the Admin SDK Directory API.
-- `StorageService.gs` owns all Sheet reads and writes. Persistent IDs are UUIDs; row numbers are internal lookup details only. `Spaces` isolates project context; `ProjectMembers` continues to enforce task visibility.
+- `StorageService.gs` owns all Sheet reads and writes. Persistent IDs are UUIDs; row numbers are internal lookup details only. `Spaces` isolates project context, `Teams`/`TeamMembers` group authorised employees, and `ProjectMembers` continues to enforce task visibility.
 - `TaskService.gs` enforces validation, project access, assignment allowlisting, locking, version checks, activity records, and bounded reads.
 - `Index.html`, `Styles.html`, and `Scripts.html` form the build-free SPA.
 

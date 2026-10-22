@@ -73,6 +73,33 @@ var SpaceService_ = {
   }
 };
 
+var TeamService_ = {
+  list: function (ctx) {
+    var teams = Storage_.all('Teams'), members = Storage_.all('TeamMembers');
+    return teams.filter(function (team) {
+      return ctx.user.role === CONFIG_.roles.ADMIN || members.some(function (member) { return member.teamId === team.teamId && member.userId === ctx.user.userId; });
+    }).map(function (team) {
+      return { teamId:team.teamId, spaceId:team.spaceId, name:team.name, description:team.description, memberCount:members.filter(function (member) { return member.teamId === team.teamId; }).length };
+    });
+  },
+  create: function (ctx, input) {
+    AuthService_.requireAdmin(ctx);
+    var spaceId = cleanText_(input && input.spaceId, 120), name = cleanText_(input && input.name, 100);
+    if (!name || !spaceId) throw appError_('VALIDATION', 'Team name and space are required.');
+    if (!Storage_.find('Spaces', 'spaceId', spaceId)) throw appError_('VALIDATION', 'Select a valid space.');
+    var now = nowIso_();
+    return Storage_.insert('Teams', { teamId:uuid_(), spaceId:spaceId, name:name, description:cleanText_(input.description,1000), createdBy:ctx.user.userId, createdAt:now, updatedAt:now });
+  },
+  setMembership: function (ctx, teamId, userId, enabled) {
+    AuthService_.requireAdmin(ctx);
+    if (!Storage_.find('Teams','teamId',teamId) || !Storage_.find('Users','userId',userId)) throw appError_('NOT_FOUND','Team or employee not found.');
+    var existing = Storage_.all('TeamMembers').find(function (member) { return member.teamId === teamId && member.userId === userId; });
+    if (enabled && !existing) return Storage_.insert('TeamMembers',{teamMemberId:uuid_(),teamId:teamId,userId:userId,createdAt:nowIso_()});
+    if (!enabled && existing) { Storage_.spreadsheet().getSheetByName('TeamMembers').deleteRow(existing._row); Storage_.invalidate(); }
+    return { teamId:teamId, userId:userId, enabled:!!enabled };
+  }
+};
+
 var ProjectService_ = {
   list: function (ctx) {
     var allowed = ctx.user.role === 'admin' ? null : Storage_.all('ProjectMembers').filter(function (m) { return m.userId === ctx.user.userId; }).map(function (m) { return m.projectId; });

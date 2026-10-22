@@ -30,7 +30,7 @@ test('effective user is not used for authorization', () => {
 });
 test('task schema has stable ID and optimistic version', () => {
   assert(config.includes("'taskId'") && config.includes("'version'") && config.includes("'position'"), 'Task schema incomplete');
-  assert(config.includes('Spaces') && config.includes('spaceId'), 'Space schema missing');
+  assert(config.includes('Spaces') && config.includes('spaceId') && config.includes('Teams') && config.includes('TeamMembers'), 'Workspace hierarchy schema missing');
   assert(tasks.includes("'VERSION_CONFLICT'"), 'Version conflict missing');
   assert(tasks.includes('Storage_.withLock'), 'Task mutation lock missing');
 });
