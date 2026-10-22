@@ -50,7 +50,7 @@ test('admin APIs enforce server-side administrator role', () => {
   });
 });
 test('required UI surfaces exist', () => {
-  ['Dashboard','Tasks','Teams','Settings','Spaces','Projects','Authorised employees'].forEach(label => assert(scripts.includes(label) || index.includes(label), `${label} missing`));
+  ['Dashboard','Tasks','Teams','Calendar','Reports','Settings','Spaces','Projects','Authorised employees'].forEach(label => assert(scripts.includes(label) || index.includes(label), `${label} missing`));
   ['Type','Tags','Progress','data-page','kanban-add'].forEach(label => assert(scripts.includes(label), `Task surface missing: ${label}`));
   assert(index.includes('globalSearch') && index.includes('quickAddBtn') && index.includes('drawer'), 'Application shell incomplete');
   ['Overdue','Today','Upcoming','No due date','Completed'].forEach(label => assert(scripts.includes(`['${label}'`), `My Tasks group missing: ${label}`));
