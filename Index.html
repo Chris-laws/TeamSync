@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TeamSync</title>
+  <?!= include('Styles'); ?>
+</head>
+<body>
+  <div id="app" class="app" data-theme="light">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <div class="brand"><span class="brand-mark">T</span><span class="brand-name">TeamSync</span><button id="collapseBtn" class="icon-btn mobile-only" aria-label="Close menu">×</button></div>
+      <nav id="primaryNav" class="nav-list"></nav>
+      <div class="sidebar-bottom">
+        <button class="nav-item" data-view="profile"><span>◎</span><span>My Profile</span></button>
+        <button class="nav-item" data-view="settings"><span>⚙</span><span>Settings</span></button>
+        <div id="sidebarUser" class="sidebar-user skeleton"></div>
+      </div>
+    </aside>
+    <div class="shell">
+      <header class="topbar">
+        <button id="menuBtn" class="icon-btn menu-btn" aria-label="Open menu">☰</button>
+        <label class="global-search"><span>⌕</span><input id="globalSearch" placeholder="Search tasks & projects" autocomplete="off"></label>
+        <div class="top-actions"><button id="themeBtn" class="icon-btn" aria-label="Toggle theme">◐</button><button id="quickAddBtn" class="btn btn-primary"><span>＋</span> Add task</button><button id="userPill" class="user-pill skeleton"></button></div>
+      </header>
+      <main id="main" class="main" tabindex="-1"><div class="page-loader"><div class="spinner"></div><p>Loading your workspace…</p></div></main>
+    </div>
+    <div id="scrim" class="scrim" hidden></div>
+    <section id="drawer" class="drawer" aria-label="Task details" aria-hidden="true"></section>
+    <div id="modalRoot"></div>
+    <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+  </div>
+  <?!= include('Scripts'); ?>
+</body>
+</html>
